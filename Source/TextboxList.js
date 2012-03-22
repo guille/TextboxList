@@ -218,7 +218,7 @@ var TextboxList = new Class({
 	},
 
     clearValues: function() {
-        list.children().each(function(){
+        this.list.getChildren().map(function(){
             var bit = getBit(this);
             if (bit.toElement().attr('class').indexOf('deletable') > -1 )
                 bit.remove();
