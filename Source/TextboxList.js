@@ -216,6 +216,14 @@ var TextboxList = new Class({
 			if (v) this.add.apply(this, $type(v) == 'array' ? [v[1], v[0], v[2]] : [v]);
 		}, this);		
 	},
+
+    clearValues: function() {
+        list.children().each(function(){
+            var bit = getBit(this);
+            if (bit.toElement().attr('class').indexOf('deletable') > -1 )
+                bit.remove();
+        });
+    },
 	
 	update: function(){
 		this.original.set('value', this.options.encode(this.getValues()));
