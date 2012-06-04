@@ -1,16 +1,13 @@
 /*
----
-description:     TextboxList
+Script: TextboxList.Autocomplete.Binary.js
+	TextboxList Autocomplete binary search extension
 
-authors:
-  - Guillermo Rauch
-
-requires:
-  core/1.2.1:   '*'
-
-provides:
-  - textboxlist.autocomplete.binary
-...
+	Authors:
+		Guillermo Rauch
+	
+	Note:
+		TextboxList is not priceless for commercial use. See <http://devthought.com/projects/mootools/textboxlist/>
+		Purchase to remove this message.
 */
 
 TextboxList.Autocomplete.Methods.binary = {
