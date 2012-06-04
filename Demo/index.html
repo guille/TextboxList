@@ -12,10 +12,7 @@
 		<!-- required stylesheet for TextboxList.Autocomplete -->
 		<link rel="stylesheet" href="../Source/TextboxList.Autocomplete.css" type="text/css" media="screen" charset="utf-8" />
 		
-		<script src="mootools-1.2.1-core-yc.js" type="text/javascript" charset="utf-8"></script>		
-
-		<!-- required for TextboxList -->
-		<script src="GrowingInput.js" type="text/javascript" charset="utf-8"></script>
+		<script src="mootools-core-1.4.5-full-nocompat.js" type="text/javascript" charset="utf-8"></script>
 				
 		<script src="../Source/TextboxList.js" type="text/javascript" charset="utf-8"></script>		
 		<script src="../Source/TextboxList.Autocomplete.js" type="text/javascript" charset="utf-8"></script>
@@ -30,7 +27,7 @@
 				t.add('Tag 1').add('Tag 2').add('Tag 3');
 				
 				// With custom adding keys 
-				var t2 = new TextboxList('form_tags_input_2', {bitsOptions:{editable:{addKeys: 188}}});
+				var t2 = new TextboxList('form_tags_input_2', {bitsOptions:{editable:{addKeys: [188, 32]},stopEnter:true}});
 				t2.add('Tag 1').add('Tag 2');
 				
 				// Autocomplete initialization
@@ -69,7 +66,7 @@
 			
 			/* Preloader for autocomplete */
 			.textboxlist-loading { background: url('images/spinner.gif') no-repeat 380px center; }
-			
+
 			/* Autocomplete results styling */
 			.form_friends .textboxlist-autocomplete-result { overflow: hidden; zoom: 1; }
 			.form_friends .textboxlist-autocomplete-result img { float: left; padding-right: 10px; }
