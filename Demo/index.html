@@ -12,30 +12,40 @@
 		<!-- required stylesheet for TextboxList.Autocomplete -->
 		<link rel="stylesheet" href="../Source/TextboxList.Autocomplete.css" type="text/css" media="screen" charset="utf-8" />
 		
-		<script src="mootools-1.2.1-core-yc.js" type="text/javascript" charset="utf-8"></script>		
-
-		<!-- required for TextboxList -->
-		<script src="GrowingInput.js" type="text/javascript" charset="utf-8"></script>
+		<script src="mootools-core-1.4.3.js" type="text/javascript" charset="utf-8"></script>
 				
-		<script src="../Source/TextboxList.js" type="text/javascript" charset="utf-8"></script>		
+		<script src="../Source/TextboxList.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../Source/TextboxList.Autocomplete.js" type="text/javascript" charset="utf-8"></script>
 		<!-- required for TextboxList.Autocomplete if method set to 'binary' -->
-		<script src="../Source/TextboxList.Autocomplete.Binary.js" type="text/javascript" charset="utf-8"></script>		
+		<script src="../Source/TextboxList.Autocomplete.Binary.js" type="text/javascript" charset="utf-8"></script>
 		
 		<!-- sample initialization -->
-		<script type="text/javascript" charset="utf-8">		
+		<script type="text/javascript" charset="utf-8">
 			window.addEvent('load', function(){
 				// Standard initialization
 				var t = new TextboxList('form_tags_input', {  });
 				t.add('Tag 1').add('Tag 2').add('Tag 3');
 				
 				// With custom adding keys 
-				var t2 = new TextboxList('form_tags_input_2', {bitsOptions:{editable:{addKeys: 188}}});
+				var t2 = new TextboxList('form_tags_input_2', {bitsOptions:{editable:{addKeys: [188, 32]}}});
 				t2.add('Tag 1').add('Tag 2');
 				
 				// Autocomplete initialization
-				var t4 = new TextboxList('form_tags_input_3', {unique: true, plugins: {autocomplete: {}}});
+				var t4 = new TextboxList('form_tags_input_3', {
+					unique: true,
+					bitsOptions: {
+						editable: {
+							addOnBlur: true,
+							stopEnter: true,
+							addKeys: [188, 32, 13]
+						}
+					},
+					plugins: {
+						autocomplete: {}
+					}
+				});
 				t4.add('John Doe').add('Jane Roe');
+				t4.plugins['autocomplete'].setValues([["Mr Dude", "Mr Dude"],["A Girl", "A Girl"],["Boy", "Boy"]]);
 				
 				// sample data loading with json, but can be jsonp, local, etc. 
 				// the only requirement is that you call setValues with an array of this format:
@@ -43,11 +53,11 @@
 				//	[id, bit_plaintext (on which search is performed), bit_html (optional, otherwise plain_text is used), autocomplete_html (html for the item displayed in the autocomplete suggestions dropdown)]
 				// ]
 				// read autocomplete.php for a JSON response exmaple
-				t4.container.addClass('textboxlist-loading');				
+				t4.container.addClass('textboxlist-loading');
 				new Request.JSON({url: 'autocomplete.php', onSuccess: function(r){
 					t4.plugins['autocomplete'].setValues(r);
 					t4.container.removeClass('textboxlist-loading');
-				}}).send();				
+				}}).send();
 				
 				// Autocomplete with poll the server as you type
 				var t5 = new TextboxList('form_tags_input_4', {unique: true, plugins: {autocomplete: {
@@ -69,7 +79,7 @@
 			
 			/* Preloader for autocomplete */
 			.textboxlist-loading { background: url('images/spinner.gif') no-repeat 380px center; }
-			
+
 			/* Autocomplete results styling */
 			.form_friends .textboxlist-autocomplete-result { overflow: hidden; zoom: 1; }
 			.form_friends .textboxlist-autocomplete-result img { float: left; padding-right: 10px; }
@@ -88,7 +98,7 @@
 		<div class="form_tags"><input type="text" name="test" value="" id="form_tags_input" /></div>
 		<p class="note">Type the tag (one or more words) and press enter. Use left/right arrows, backspace, delete to navigate</p>
 		
-		<p>Enter tags (with commas)</p>
+		<p>Enter tags (with commas or space)</p>
 		<div class="form_tags"><input type="text" name="test2" value="" id="form_tags_input_2" /></div>
 		<p class="note">Type the tag (one or more words) and press comma (,). Use left/right arrows, backspace, delete to navigate</p>
 		
