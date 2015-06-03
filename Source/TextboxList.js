@@ -444,7 +444,7 @@ TextboxListBit.Box = new Class({
 		this.bit.addEvent('click', this.focus.bind(this));
 		if (this.options.deleteButton){
 			this.bit.addClass(this.typeprefix + '-deletable');
-			this.close = new Element('a', {href: '#', 'class': this.typeprefix + '-deletebutton', events: {click: this.remove.bind(this)}}).inject(this.bit);
+			this.close = new Element('a', {href: 'javascript:void(0)', 'class': this.typeprefix + '-deletebutton', events: {click: this.remove.bind(this)}}).inject(this.bit);
 		}
 		this.bit.getChildren().addEvent('click', function(e){ e.stop(); });
   }
