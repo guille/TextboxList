@@ -43,7 +43,7 @@ var TextboxList = new Class({
 	hideEditableBits: true,
     	inBetweenEditableBits: true,
     	inputPlaceholder: null,
-	keys: {previous: Event.Keys.left, next: Event.Keys.right},
+	keys: {previous: 'left', next: 'right', delete: 'delete', backspace: 'backspace'},
 	bitsOptions: {editable: {}, box: {}},
 plugins: {},
 	check: function(s){ return s.clean().replace(/,/g, '') != ''; },
@@ -101,28 +101,31 @@ plugins: {},
 				var value = this.current.getValue()[1];
 				var special = ['shift', 'alt', 'meta', 'ctrl'].some(function(e){ return ev[e]; });
 				var custom = special || (this.current.is('editable') && this.current.isSelected());
-				switch (ev.code){
-					case Event.Keys.backspace:
-						if (this.current.is('box')){ 
+				switch (ev.key){
+					case this.options.keys.backspace:
+						if (this.current.is('box')){
 							ev.stop();
-							return this.current.remove(); 
+							return this.current.remove();
 						}
+						break;
 					case this.options.keys.previous:
 						if (this.current.is('box') || ((caret == 0 || !value.length) && !custom)){
 							ev.stop();
 							this.focusRelative('previous');
 						}
 						break;
-					case Event.Keys['delete']:
-						if (this.current.is('box')){ 
+					case this.options.keys.delete:
+						if (this.current.is('box')){
 							ev.stop();
-							return this.current.remove(); 
+							return this.current.remove();
 						}
-					case this.options.keys.next: 
+						break
+					case this.options.keys.next:
 						if (this.current.is('box') || (caret == value.length && !custom)){
 							ev.stop();
 							this.focusRelative('next');
 						}
+						break;
 				}
 			}.bind(this)
 		});		
