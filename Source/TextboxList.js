@@ -102,30 +102,23 @@ plugins: {},
 				var special = ['shift', 'alt', 'meta', 'ctrl'].some(function(e){ return ev[e]; });
 				var custom = special || (this.current.is('editable') && this.current.isSelected());
 				switch (ev.key){
+					case this.options.keys.delete:
 					case this.options.keys.backspace:
 						if (this.current.is('box')){
 							ev.stop();
 							return this.current.remove();
 						}
-						break;
 					case this.options.keys.previous:
 						if (this.current.is('box') || ((caret == 0 || !value.length) && !custom)){
 							ev.stop();
 							this.focusRelative('previous');
 						}
 						break;
-					case this.options.keys.delete:
-						if (this.current.is('box')){
-							ev.stop();
-							return this.current.remove();
-						}
-						break
 					case this.options.keys.next:
 						if (this.current.is('box') || (caret == value.length && !custom)){
 							ev.stop();
 							this.focusRelative('next');
 						}
-						break;
 				}
 			}.bind(this)
 		});		
