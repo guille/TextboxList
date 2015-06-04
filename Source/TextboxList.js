@@ -20,39 +20,40 @@ var TextboxList = new Class({
   plugins: [],
 
   options: {/*
-    onFocus: $empty,
-    onBlur: $empty,
-    onBitFocus: $empty,
-    onBitBlur: $empty,
-    onBitAdd: $empty,
-    onBitRemove: $empty,
-    onBitBoxFocus: $empty,
-    onBitBoxBlur: $empty,
-    onBitBoxAdd: $empty,
-    onBitBoxRemove: $empty,
-    onBitEditableFocus: $empty,
-    onBitEditableBlue: $empty,
-    onBitEditableAdd: $empty,
-    onBitEditableRemove: $empty,*/
-    prefix: 'textboxlist',
-    max: null,
-		unique: false,
-		uniqueInsensitive: true,
-    endEditableBit: true,
-		startEditableBit: true,
-		hideEditableBits: true,
-    inBetweenEditableBits: true,
-		keys: {previous: Event.Keys.left, next: Event.Keys.right},
-		bitsOptions: {editable: {}, box: {}},
-    plugins: {},
-		check: function(s){ return s.clean().replace(/,/g, '') != ''; },
-		encode: function(o){ 
-			return o.map(function(v){				
-				v = ($chk(v[0]) ? v[0] : v[1]);
-				return $chk(v) ? v : null;
-			}).clean().join(','); 
-		},
-		decode: function(o){ return o.split(','); }
+	onFocus: $empty,
+	onBlur: $empty,
+	onBitFocus: $empty,
+	onBitBlur: $empty,
+	onBitAdd: $empty,
+	onBitRemove: $empty,
+	onBitBoxFocus: $empty,
+	onBitBoxBlur: $empty,
+	onBitBoxAdd: $empty,
+	onBitBoxRemove: $empty,
+	onBitEditableFocus: $empty,
+	onBitEditableBlue: $empty,
+	onBitEditableAdd: $empty,
+	onBitEditableRemove: $empty,*/
+	prefix: 'textboxlist',
+	max: null,
+	unique: false,
+	uniqueInsensitive: true,
+    	endEditableBit: true,
+	startEditableBit: true,
+	hideEditableBits: true,
+    	inBetweenEditableBits: true,
+    	inputPlaceholder: null,
+	keys: {previous: 'left', next: 'right', delete: 'delete', backspace: 'backspace'},
+	bitsOptions: {editable: {}, box: {}},
+plugins: {},
+	check: function(s){ return s.clean().replace(/,/g, '') != ''; },
+	encode: function(o){ 
+		return o.map(function(v){				
+			v = ($chk(v[0]) ? v[0] : v[1]);
+			return $chk(v) ? v : null;
+		}).clean().join(','); 
+	},
+	decode: function(o){ return o.split(','); }
   },
   
   initialize: function(element, options){
@@ -62,6 +63,13 @@ var TextboxList = new Class({
 		this.container.addEvent('click', function(e){ 
 			if ((e.target == this.list || e.target == this.container) && (!this.focused || $(this.current) != this.list.getLast())) this.focusLast(); 			
 		}.bind(this));
+		if(this.options.inputPlaceholder) {
+	            this.inputPlaceholder = new Element('div', {'class': this.options.prefix + '-placeholder'}).inject(this.container, 'top');
+	            this.inputPlaceholder.set('html', this.options.inputPlaceholder);
+	            this.inputPlaceholder.addEvent('click', function(e){
+	                this.focusLast();
+	            }.bind(this));
+	        }
     this.list = new Element('ul', {'class': this.options.prefix + '-bits'}).inject(this.container);		
 		for (var name in this.options.plugins) this.enablePlugin(name, this.options.plugins[name]);		
 		['check', 'encode', 'decode'].each(function(i){ this.options[i] = this.options[i].bind(this); }, this);
@@ -93,11 +101,12 @@ var TextboxList = new Class({
 				var value = this.current.getValue()[1];
 				var special = ['shift', 'alt', 'meta', 'ctrl'].some(function(e){ return ev[e]; });
 				var custom = special || (this.current.is('editable') && this.current.isSelected());
-				switch (ev.code){
-					case Event.Keys.backspace:
-						if (this.current.is('box')){ 
+				switch (ev.key){
+					case this.options.keys.delete:
+					case this.options.keys.backspace:
+						if (this.current.is('box')){
 							ev.stop();
-							return this.current.remove(); 
+							return this.current.remove();
 						}
 					case this.options.keys.previous:
 						if (this.current.is('box') || ((caret == 0 || !value.length) && !custom)){
@@ -105,12 +114,7 @@ var TextboxList = new Class({
 							this.focusRelative('previous');
 						}
 						break;
-					case Event.Keys['delete']:
-						if (this.current.is('box')){ 
-							ev.stop();
-							return this.current.remove(); 
-						}
-					case this.options.keys.next: 
+					case this.options.keys.next:
 						if (this.current.is('box') || (caret == value.length && !custom)){
 							ev.stop();
 							this.focusRelative('next');
@@ -143,6 +147,7 @@ var TextboxList = new Class({
 			this.focused = true;
 			this.fireEvent('focus', bit);
 		}
+		this.toggleInputPlaceholder();
 	},
 	
 	onBlur: function(bit, all){
@@ -168,6 +173,7 @@ var TextboxList = new Class({
 		var prior = this.getBit($(bit).getPrevious());
 		if (prior && prior.is('editable')) prior.remove();
 		this.focusRelative('next', bit);
+		this.toggleInputPlaceholder();
 	},
 	
 	focusRelative: function(dir, to){
@@ -186,6 +192,7 @@ var TextboxList = new Class({
 		if (! this.focused) return this;
 		if (this.current) this.current.blur();
 		this.focused = false;
+		this.toggleInputPlaceholder();
 		return this.fireEvent('blur');
 	},
 	
@@ -219,7 +226,12 @@ var TextboxList = new Class({
 	
 	update: function(){
 		this.original.set('value', this.options.encode(this.getValues()));
-	}
+	},
+	
+	toggleInputPlaceholder: function() {
+		if(!this.options.inputPlaceholder) return false;
+		this.inputPlaceholder.setStyle('display', (this.focused || this.original.get('value') != '') ? 'none' : 'block')
+	},
   
 });
 
@@ -428,7 +440,7 @@ TextboxListBit.Box = new Class({
 		this.bit.addEvent('click', this.focus.bind(this));
 		if (this.options.deleteButton){
 			this.bit.addClass(this.typeprefix + '-deletable');
-			this.close = new Element('a', {href: '#', 'class': this.typeprefix + '-deletebutton', events: {click: this.remove.bind(this)}}).inject(this.bit);
+			this.close = new Element('a', {href: 'javascript:void(0)', 'class': this.typeprefix + '-deletebutton', events: {click: this.remove.bind(this)}}).inject(this.bit);
 		}
 		this.bit.getChildren().addEvent('click', function(e){ e.stop(); });
   }

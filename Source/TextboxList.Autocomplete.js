@@ -35,7 +35,8 @@ TextboxList.Autocomplete = new Class({
 			loadPlaceholder: 'Please wait...'
 		},
 		method: 'standard',
-		placeholder: 'Type to receive suggestions'
+		placeholder: 'Type to See Suggestions',
+        	keys: {up: 'up', down: 'down', enter: 'enter'}
 	},
 	
 	initialize: function(textboxlist, options){
@@ -194,20 +195,21 @@ TextboxList.Autocomplete = new Class({
 	},
 	
 	navigate: function(ev){
-		switch (ev.code){
-			case Event.Keys.up:			
+		switch (ev.key){
+			case this.options.keys.up:
 				ev.stop();
 				(!this.options.onlyFromValues && this.current && this.current == this.list.getFirst()) ? this.blur() : this.focusRelative('previous');
 				break;
-			case Event.Keys.down:			
+			case this.options.keys.down:
 				ev.stop();
 				this.current ? this.focusRelative('next') : this.focusFirst();
 				break;
-			case Event.Keys.enter:
+			case this.options.keys.enter:
 				ev.stop();
-				if (this.current) this.addCurrent();
-				else if (!this.options.onlyFromValues){
-					var value = this.currentInput.getValue();				
+				if (this.current) {
+					this.addCurrent();
+				} else if (!this.options.onlyFromValues) {
+					var value = this.currentInput.getValue();
 					var b = this.textboxlist.create('box', value);
 					if (b){
 						b.inject($(this.currentInput), 'before');
